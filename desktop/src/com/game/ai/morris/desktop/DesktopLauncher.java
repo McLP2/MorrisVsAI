@@ -8,8 +8,10 @@ public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         config.title = "Morris Vs AI";
-        config.width = 1; // non default for max fullscreen resolution
+        config.width = 800;
+        config.height = 620;
         config.fullscreen = true;
+        config.samples = 8;
         new LwjglApplication(new Morris(), config);
     }
 }
