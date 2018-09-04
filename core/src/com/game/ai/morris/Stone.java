@@ -12,11 +12,12 @@ class Stone extends Sprite {
     private boolean active;
     private int radius;
     private int ring;
-    private int position;
+    private int ringPosition;
 
     Stone(StoneColor color, Texture texture) {
         super(texture);
         float scale = Gdx.graphics.getHeight() / (float) 1536;
+        this.setOriginCenter();
         this.setScale(scale);
         stoneColor = color;
         radius = round(scale * 64);
@@ -46,20 +47,39 @@ class Stone extends Sprite {
         }
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-        super.setX(GameBoard.getGridCoordinatesX(ring, position));
-        super.setY(GameBoard.getGridCoordinatesY(ring, position));
+    public void setRingPosition(int ringPosition) {
+        this.ringPosition = ringPosition;
+        setPosition(
+                GameBoard.getGridCoordinatesX(ring, ringPosition),
+                GameBoard.getGridCoordinatesY(ring, ringPosition)
+        );
     }
 
     public void setRing(int ring) {
         this.ring = ring;
-        super.setX(GameBoard.getGridCoordinatesX(ring, position));
-        super.setY(GameBoard.getGridCoordinatesY(ring, position));
+        setPosition(
+                GameBoard.getGridCoordinatesX(ring, ringPosition),
+                GameBoard.getGridCoordinatesY(ring, ringPosition)
+        );
     }
 
-    public int getPosition() {
-        return position;
+    @Override
+    public void setPosition(float x, float y) {
+        super.setPosition(x - getWidth() / 2, y - getHeight() / 2);
+    }
+
+    @Override
+    public float getX() {
+        return super.getX() + getWidth() / 2;
+    }
+
+    @Override
+    public float getY() {
+        return super.getY() + getHeight() / 2;
+    }
+
+    public int getRingPosition() {
+        return ringPosition;
     }
 
     public int getRing() {

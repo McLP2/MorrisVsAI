@@ -1,7 +1,6 @@
 package com.game.ai.morris;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -46,14 +45,12 @@ public class Morris extends ApplicationAdapter {
         for (int i = 0; i < stones.length; i++) {
             if (i % 2 == 0) {
                 stones[i] = new Stone(StoneColor.WHITE, whiteStone);
-                stones[i].setOrigin((float) -64, (float) -64);
                 stones[i].setRing(i / 6);
-                stones[i].setPosition(i % 8);
+                stones[i].setRingPosition(i % 8);
             } else {
                 stones[i] = new Stone(StoneColor.BLACK, blackStone);
-                stones[i].setOrigin((float) -64, (float) -64);
                 stones[i].setRing(i / 6);
-                stones[i].setPosition(i % 8);
+                stones[i].setRingPosition(i % 8);
             }
         }
     }
@@ -101,9 +98,9 @@ public class Morris extends ApplicationAdapter {
             // TODO: if near origin, reset
             // TODO: add stone removal
             int r = board.getNearestRing(activeStone);
-            int p = board.getNearestPosition(activeStone);
+            int p = board.getNearestRingPosition(activeStone);
             activeStone.setRing(r);
-            activeStone.setPosition(p);
+            activeStone.setRingPosition(p);
             activeStone = null;
         }
     }

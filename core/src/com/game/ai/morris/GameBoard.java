@@ -142,7 +142,7 @@ class GameBoard {
             }
         }
         for (Stone stone : stones) {
-            finalArray[stone.getRing()][stone.getPosition()] = stone.getStoneColor();
+            finalArray[stone.getRing()][stone.getRingPosition()] = stone.getStoneColor();
         }
         return finalArray;
     }
@@ -167,7 +167,7 @@ class GameBoard {
         return highvalue;
     }
 
-    int getNearestPosition(Stone stone) {
+    int getNearestRingPosition(Stone stone) {
         int x = round(stone.getX());
         int y = round(stone.getY());
         int highscore = -1;
