@@ -21,7 +21,7 @@ class Stone extends Sprite {
         this.setScale(scale);
         stoneColor = color;
         radius = round(scale * 64);
-        active = true;
+        active = false;
     }
 
     MorrisColor getStoneColor() {

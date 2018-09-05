@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import static com.badlogic.gdx.math.MathUtils.round;
+import static java.lang.Math.abs;
 
 class GameBoard {
     private static final int margin = 96;
@@ -149,7 +150,7 @@ class GameBoard {
         return finalArray;
     }
 
-    int getNearestRing(Stone stone) {
+    int getNearestRing(Stone stone, boolean canJump) {
         int x = round(stone.getX());
         int y = round(stone.getY());
         int highscore = -1;
@@ -160,7 +161,7 @@ class GameBoard {
                 int gridY = getGridCoordinatesY(i, j);
                 int squared_dist = (gridX - x) * (gridX - x) + (gridY - y) * (gridY - y);
                 // TODO: implement canJump
-                if ((highscore == -1 || highscore > squared_dist) && isPositionLegal(stone, i, j, true)) {
+                if ((highscore == -1 || highscore > squared_dist) && isPositionLegal(stone, i, j, canJump)) {
                     highscore = squared_dist;
                     highvalue = i;
                 }
@@ -169,7 +170,7 @@ class GameBoard {
         return highvalue;
     }
 
-    int getNearestRingPosition(Stone stone) {
+    int getNearestRingPosition(Stone stone, boolean canJump) {
         int x = round(stone.getX());
         int y = round(stone.getY());
         int highscore = -1;
@@ -180,7 +181,7 @@ class GameBoard {
                 int gridY = getGridCoordinatesY(i, j);
                 int squared_dist = (gridX - x) * (gridX - x) + (gridY - y) * (gridY - y);
                 // TODO: implement canJump
-                if ((highscore == -1 || highscore > squared_dist) && isPositionLegal(stone, i, j, true)) {
+                if ((highscore == -1 || highscore > squared_dist) && isPositionLegal(stone, i, j, canJump)) {
                     highscore = squared_dist;
                     highvalue = j;
                 }
@@ -189,9 +190,18 @@ class GameBoard {
         return highvalue;
     }
 
+    // TODO: improve
     private boolean isPositionLegal(Stone stone, int ring, int postion, boolean canJump) {
-        // TODO: Implement real rules
-        return this.toArray()[ring][postion] == MorrisColor.NONE;
+        boolean posEmpty = this.toArray()[ring][postion] == MorrisColor.NONE;
+        if (canJump) {
+            return posEmpty;
+        } else {
+            boolean sameRing = stone.getRing() == ring;
+            boolean samePosition = stone.getRingPosition() == postion;
+            boolean nextToPos = abs(stone.getRingPosition() - postion) % 7 == 1 && sameRing;
+            boolean nextToRing = abs(stone.getRing() - ring) == 1 && samePosition;
+            return posEmpty && (nextToRing || nextToPos);
+        }
     }
 
     int[] getMills(MorrisColor activePlayer) {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import static com.game.ai.morris.MorrisColor.BLACK;
 import static com.game.ai.morris.MorrisColor.WHITE;
+import static java.lang.Math.min;
 
 
 /*
@@ -35,6 +36,12 @@ public class Morris extends ApplicationAdapter {
     private Stone activeStone = null;
     private MorrisColor activePlayer = WHITE;
     private int newMills;
+    private boolean canJump = true;
+    private GameState gameState = GameState.OPENING;
+    private int placedCounter = 0;
+    private float activeX;
+    private float activeY;
+    private boolean saveMode = false;
 
     private GameBoard board;
 
@@ -55,12 +62,12 @@ public class Morris extends ApplicationAdapter {
         for (int i = 0; i < stones.length; i++) {
             if (i % 2 == 0) {
                 stones[i] = new Stone(WHITE, whiteStone);
-                stones[i].setRing(i / 6);
-                stones[i].setRingPosition(i % 8);
+                //stones[i].setRing(i / 6);
+                //tones[i].setRingPosition(i % 8);
             } else {
                 stones[i] = new Stone(BLACK, blackStone);
-                stones[i].setRing(i / 6);
-                stones[i].setRingPosition(i % 8);
+                //stones[i].setRing(i / 6);
+                //stones[i].setRingPosition(i % 8);
             }
         }
     }
@@ -70,6 +77,79 @@ public class Morris extends ApplicationAdapter {
         clear();
         board.draw();
         drawStones();
+        if (saveMode) {
+            if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                saveMode = false;
+            }
+            return;
+        }
+        switch (gameState) {
+            case OPENING:
+                place();
+                checkStateChange();
+                break;
+            case NORMAL:
+                play();
+                checkStateChange();
+                break;
+            case JUMPING:
+                play();
+                checkStateChange();
+                break;
+            case WIN:
+                clear();
+                board.draw();
+                drawStones();
+                write("Player " + activePlayer.toString() + " has won!");
+                break;
+        }
+
+        // TODO: AI selection
+        // TODO: TreeHunter AI
+        // TODO: NeuralPower AI
+    }
+
+    private void place() {
+        if (newMills > 0) {
+            write("Player " + activePlayer.toString() + " can remove a stone!");
+            pickStone();
+        } else {
+            write("Player " + activePlayer.toString() + " can place a stone!");
+            if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                int[] lastMills = board.getMills(activePlayer);
+
+                Stone stone = stones[placedCounter];
+                int x = Gdx.input.getX();
+                int y = Gdx.graphics.getHeight() - Gdx.input.getY();
+                stone.setPosition(x, y);
+                int r = board.getNearestRing(stone, canJump);
+                int p = board.getNearestRingPosition(stone, canJump);
+                int dx = x - GameBoard.getGridCoordinatesX(r, p);
+                int dy = y - GameBoard.getGridCoordinatesY(r, p);
+                int rd = stone.getRadius();
+                if (dx * dx + dy * dy < rd * rd) {
+                    stone.setRing(r);
+                    stone.setRingPosition(p);
+                    stone.setActive(true);
+                    placedCounter++;
+
+                    newMills = 0;
+                    for (int i : board.getMills(activePlayer)) {
+                        newMills++;
+                        for (int j : lastMills) {
+                            if (i == j) newMills--;
+                        }
+                    }
+
+                    if (newMills == 0) {
+                        switchPlayer();
+                    }
+                }
+            }
+        }
+    }
+
+    private void play() {
         if (newMills > 0) {
             pickStone();
             write("Player " + activePlayer.toString() + " can remove a stone!");
@@ -78,13 +158,54 @@ public class Morris extends ApplicationAdapter {
             findActive();
             moveActive();
         }
-        // TODO: game opening
-        // TODO: winning condition
-        // TODO: jumping condition
+    }
 
-        // TODO: AI selection
-        // TODO: TreeHunter AI
-        // TODO: NeuralPower AI
+    private void checkStateChange() {
+        switch (gameState) {
+            case OPENING:
+                if (placedCounter == 18) {
+                    gameState = GameState.NORMAL;
+                    canJump = false;
+                    checkStateChange();
+                }
+                break;
+            case NORMAL:
+                if (getSmallestAmount() <= 3) {
+                    gameState = GameState.JUMPING;
+                    canJump = true;
+                    checkStateChange();
+                }
+                break;
+            case JUMPING:
+                if (getSmallestAmount() <= 2) {
+                    gameState = GameState.WIN;
+                    if (newMills == 0) {
+                        switchPlayer();
+                    }
+                    checkStateChange();
+                }
+                break;
+        }
+        // TODO: canJump for differentPlayers
+        // TODO: lose if cant move.
+    }
+
+    private int getSmallestAmount() {
+        int whiteCount = 0;
+        int blackCount = 0;
+        for (Stone stone : stones) {
+            if (stone.isActive()) {
+                switch (stone.getStoneColor()) {
+                    case BLACK:
+                        blackCount++;
+                        break;
+                    case WHITE:
+                        whiteCount++;
+                        break;
+                }
+            }
+        }
+        return min(whiteCount, blackCount);
     }
 
     private void write(String string) {
@@ -115,15 +236,33 @@ public class Morris extends ApplicationAdapter {
                             stone.getStoneColor() == activePlayer &&
                             (s_x - m_x) * (s_x - m_x) + (s_y - m_y) * (s_y - m_y) < (r * r)) {
                         activeStone = stone;
+                        activeX = activeStone.getX();
+                        activeY = activeStone.getY();
                     }
                 }
             }
         } else if (activeStone != null) {
-            // TODO: if near origin, reset
+            // if near origin, reset
+            float dx = activeX - activeStone.getX();
+            float dy = activeY - activeStone.getY();
+            float rd = activeStone.getRadius();
+            if (dx * dx + dy * dy < rd * rd) {
+                activeStone.setRing(activeStone.getRing());
+                activeStone.setRingPosition(activeStone.getRingPosition());
+                activeStone = null;
+                return;
+            }
             int[] lastMills = board.getMills(activePlayer);
 
-            int r = board.getNearestRing(activeStone);
-            int p = board.getNearestRingPosition(activeStone);
+            // if no position, reset
+            int r = board.getNearestRing(activeStone, canJump);
+            int p = board.getNearestRingPosition(activeStone, canJump);
+            if (r == -1 || p == -1) {
+                activeStone.setRing(activeStone.getRing());
+                activeStone.setRingPosition(activeStone.getRingPosition());
+                activeStone = null;
+                return;
+            }
             activeStone.setRing(r);
             activeStone.setRingPosition(p);
             activeStone = null;
@@ -142,6 +281,7 @@ public class Morris extends ApplicationAdapter {
         }
     }
 
+    // TODO: only from non-mills if there are.
     private void pickStone() {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             for (Stone stone : stones) {
@@ -154,7 +294,7 @@ public class Morris extends ApplicationAdapter {
                         (s_x - m_x) * (s_x - m_x) + (s_y - m_y) * (s_y - m_y) < (r * r)) {
                     stone.setActive(false);
                     newMills--;
-                    System.out.println(newMills);
+                    saveMode = true;
                 }
             }
             if (newMills == 0) {
