@@ -8,13 +8,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import static com.badlogic.gdx.math.MathUtils.round;
 
 class Stone extends Sprite {
-    private StoneColor stoneColor;
+    private MorrisColor stoneColor;
     private boolean active;
     private int radius;
     private int ring;
     private int ringPosition;
 
-    Stone(StoneColor color, Texture texture) {
+    Stone(MorrisColor color, Texture texture) {
         super(texture);
         float scale = Gdx.graphics.getHeight() / (float) 1536;
         this.setOriginCenter();
@@ -24,19 +24,19 @@ class Stone extends Sprite {
         active = true;
     }
 
-    public StoneColor getStoneColor() {
+    MorrisColor getStoneColor() {
         return stoneColor;
     }
 
-    private boolean isActive() {
+    boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    void setActive(boolean active) {
         this.active = active;
     }
 
-    public int getRadius() {
+    int getRadius() {
         return radius;
     }
 
@@ -47,7 +47,7 @@ class Stone extends Sprite {
         }
     }
 
-    public void setRingPosition(int ringPosition) {
+    void setRingPosition(int ringPosition) {
         this.ringPosition = ringPosition;
         setPosition(
                 GameBoard.getGridCoordinatesX(ring, ringPosition),
@@ -55,7 +55,7 @@ class Stone extends Sprite {
         );
     }
 
-    public void setRing(int ring) {
+    void setRing(int ring) {
         this.ring = ring;
         setPosition(
                 GameBoard.getGridCoordinatesX(ring, ringPosition),
@@ -78,11 +78,11 @@ class Stone extends Sprite {
         return super.getY() + getHeight() / 2;
     }
 
-    public int getRingPosition() {
+    int getRingPosition() {
         return ringPosition;
     }
 
-    public int getRing() {
+    int getRing() {
         return ring;
     }
 }

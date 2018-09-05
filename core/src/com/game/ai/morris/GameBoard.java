@@ -133,16 +133,18 @@ class GameBoard {
         return margin + y * (ring + 1) * size / 6 + size / 6 * (2 - ring);
     }
 
-    public StoneColor[][] toArray() {
+    public MorrisColor[][] toArray() {
         // ring, position
-        StoneColor[][] finalArray = new StoneColor[3][8];
+        MorrisColor[][] finalArray = new MorrisColor[3][8];
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 8; j++) {
-                finalArray[i][j] = StoneColor.NONE;
+                finalArray[i][j] = MorrisColor.NONE;
             }
         }
         for (Stone stone : stones) {
-            finalArray[stone.getRing()][stone.getRingPosition()] = stone.getStoneColor();
+            if (stone.isActive()) {
+                finalArray[stone.getRing()][stone.getRingPosition()] = stone.getStoneColor();
+            }
         }
         return finalArray;
     }
@@ -189,7 +191,41 @@ class GameBoard {
 
     private boolean isPositionLegal(Stone stone, int ring, int postion, boolean canJump) {
         // TODO: Implement real rules
-        return this.toArray()[ring][postion] == StoneColor.NONE;
+        return this.toArray()[ring][postion] == MorrisColor.NONE;
     }
 
+    int[] getMills(MorrisColor activePlayer) {
+        MorrisColor[][] arr = toArray();
+        int i = 0;
+        int[] result = new int[0];
+        for (int r = 0; r < 3; r++) {
+            for (int p = 0; p < 8; p += 2) {
+                if (arr[r][p] == activePlayer &&
+                        arr[r][p + 1] == activePlayer &&
+                        arr[r][(p + 2) % 8] == activePlayer) {
+                    i++;
+                    int[] new_result = new int[i];
+                    if (result.length > 0) {
+                        System.arraycopy(result, 0, new_result, 0, i - 1);
+                    }
+                    new_result[i - 1] = r * 8 + p;
+                    result = new_result;
+                }
+            }
+        }
+        for (int p = 1; p < 8; p += 2) {
+            if (arr[0][p] == activePlayer &&
+                    arr[1][p] == activePlayer &&
+                    arr[2][p] == activePlayer) {
+                i++;
+                int[] new_result = new int[i];
+                if (result.length > 0) {
+                    System.arraycopy(result, 0, new_result, 0, i - 1);
+                }
+                new_result[i - 1] = p;
+                result = new_result;
+            }
+        }
+        return result;
+    }
 }

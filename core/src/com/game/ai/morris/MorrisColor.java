@@ -1,5 +1,5 @@
 package com.game.ai.morris;
 
-public enum StoneColor {
+public enum MorrisColor {
     WHITE, BLACK, NONE
 }
