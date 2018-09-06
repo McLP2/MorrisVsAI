@@ -31,7 +31,7 @@ public class MorrisKeyListener implements InputProcessor {
 
         Pixmap pixmap = new Pixmap(Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight(), Pixmap.Format.RGBA8888);
         BufferUtils.copy(pixels, 0, pixmap.getPixels(), pixels.length);
-        PixmapIO.writePNG(Gdx.files.external("/Desktop/latestScreenshot.png"), pixmap);
+        PixmapIO.writePNG(Gdx.files.external("/Desktop/MorrisScreenshot" + System.currentTimeMillis() + ".png"), pixmap);
         pixmap.dispose();
     }
 
