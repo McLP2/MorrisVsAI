@@ -36,7 +36,8 @@ public class Morris extends ApplicationAdapter {
     private Stone activeStone = null;
     private MorrisColor activePlayer = WHITE;
     private int newMills;
-    private boolean canJump = true;
+    private boolean whiteCanJump = true;
+    private boolean blackCanJump = true;
     private GameState gameState = GameState.OPENING;
     private int placedCounter = 0;
     private float activeX;
@@ -92,10 +93,6 @@ public class Morris extends ApplicationAdapter {
                 play();
                 checkStateChange();
                 break;
-            case JUMPING:
-                play();
-                checkStateChange();
-                break;
             case WIN:
                 clear();
                 board.draw();
@@ -122,6 +119,12 @@ public class Morris extends ApplicationAdapter {
                 int x = Gdx.input.getX();
                 int y = Gdx.graphics.getHeight() - Gdx.input.getY();
                 stone.setPosition(x, y);
+                boolean canJump;
+                if (activePlayer == WHITE) {
+                    canJump = whiteCanJump;
+                } else {
+                    canJump = blackCanJump;
+                }
                 int r = board.getNearestRing(stone, canJump);
                 int p = board.getNearestRingPosition(stone, canJump);
                 int dx = x - GameBoard.getGridCoordinatesX(r, p);
@@ -165,18 +168,13 @@ public class Morris extends ApplicationAdapter {
             case OPENING:
                 if (placedCounter == 18) {
                     gameState = GameState.NORMAL;
-                    canJump = false;
+                    whiteCanJump = false;
+                    blackCanJump = false;
                     checkStateChange();
                 }
                 break;
             case NORMAL:
-                if (getSmallestAmount() <= 3) {
-                    gameState = GameState.JUMPING;
-                    canJump = true;
-                    checkStateChange();
-                }
-                break;
-            case JUMPING:
+                checkJumping();
                 if (getSmallestAmount() <= 2) {
                     gameState = GameState.WIN;
                     if (newMills == 0) {
@@ -186,8 +184,30 @@ public class Morris extends ApplicationAdapter {
                 }
                 break;
         }
-        // TODO: canJump for differentPlayers
         // TODO: lose if cant move.
+    }
+
+    private void checkJumping() {
+        int whiteCount = 0;
+        int blackCount = 0;
+        for (Stone stone : stones) {
+            if (stone.isActive()) {
+                switch (stone.getStoneColor()) {
+                    case BLACK:
+                        blackCount++;
+                        break;
+                    case WHITE:
+                        whiteCount++;
+                        break;
+                }
+            }
+        }
+        if (whiteCount <= 3) {
+            whiteCanJump = true;
+        }
+        if (blackCount <= 3) {
+            blackCanJump = true;
+        }
     }
 
     private int getSmallestAmount() {
@@ -255,6 +275,12 @@ public class Morris extends ApplicationAdapter {
             int[] lastMills = board.getMills(activePlayer);
 
             // if no position, reset
+            boolean canJump;
+            if (activePlayer == WHITE) {
+                canJump = whiteCanJump;
+            } else {
+                canJump = blackCanJump;
+            }
             int r = board.getNearestRing(activeStone, canJump);
             int p = board.getNearestRingPosition(activeStone, canJump);
             if (r == -1 || p == -1) {
