@@ -190,16 +190,15 @@ class GameBoard {
         return highvalue;
     }
 
-    // TODO: improve
-    private boolean isPositionLegal(Stone stone, int ring, int postion, boolean canJump) {
-        boolean posEmpty = this.toArray()[ring][postion] == MorrisColor.NONE;
+    private boolean isPositionLegal(Stone stone, int ring, int position, boolean canJump) {
+        boolean posEmpty = this.toArray()[ring][position] == MorrisColor.NONE;
         if (canJump) {
             return posEmpty;
         } else {
             boolean sameRing = stone.getRing() == ring;
-            boolean samePosition = stone.getRingPosition() == postion;
-            boolean nextToPos = abs(stone.getRingPosition() - postion) % 7 == 1 && sameRing;
-            boolean nextToRing = abs(stone.getRing() - ring) == 1 && samePosition;
+            boolean samePosition = stone.getRingPosition() == position;
+            boolean nextToPos = abs(stone.getRingPosition() - position) % 6 == 1 && sameRing;
+            boolean nextToRing = abs(stone.getRing() - ring) == 1 && samePosition && position % 2 == 1;
             return posEmpty && (nextToRing || nextToPos);
         }
     }
