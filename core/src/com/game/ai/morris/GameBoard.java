@@ -160,7 +160,6 @@ class GameBoard {
                 int gridX = getGridCoordinatesX(i, j);
                 int gridY = getGridCoordinatesY(i, j);
                 int squared_dist = (gridX - x) * (gridX - x) + (gridY - y) * (gridY - y);
-                // TODO: implement canJump
                 if ((highscore == -1 || highscore > squared_dist) && isPositionLegal(stone, i, j, canJump)) {
                     highscore = squared_dist;
                     highvalue = i;
@@ -180,7 +179,6 @@ class GameBoard {
                 int gridX = getGridCoordinatesX(i, j);
                 int gridY = getGridCoordinatesY(i, j);
                 int squared_dist = (gridX - x) * (gridX - x) + (gridY - y) * (gridY - y);
-                // TODO: implement canJump
                 if ((highscore == -1 || highscore > squared_dist) && isPositionLegal(stone, i, j, canJump)) {
                     highscore = squared_dist;
                     highvalue = j;
@@ -190,7 +188,7 @@ class GameBoard {
         return highvalue;
     }
 
-    private boolean isPositionLegal(Stone stone, int ring, int position, boolean canJump) {
+    boolean isPositionLegal(Stone stone, int ring, int position, boolean canJump) {
         boolean posEmpty = this.toArray()[ring][position] == MorrisColor.NONE;
         if (canJump) {
             return posEmpty;
@@ -201,6 +199,19 @@ class GameBoard {
             boolean nextToRing = abs(stone.getRing() - ring) == 1 && samePosition && position % 2 == 1;
             return posEmpty && (nextToRing || nextToPos);
         }
+    }
+
+    boolean stoneInMill(Stone stone) {
+        MorrisColor[][] arr = toArray();
+        int p = stone.getRingPosition() + 8; // for modulo
+        int r = stone.getRing();
+        MorrisColor c = stone.getStoneColor();
+        if (p % 2 == 1 &&
+                (arr[0][p % 8] == c && arr[1][p % 8] == c && arr[2][p % 8] == c) ||
+                (arr[r][(p - 1) % 8] == c && arr[r][p % 8] == c && arr[r][(p + 1) % 8] == c)) {
+            return true;
+        } else return (arr[r][(p) % 8] == c && arr[r][(p + 1) % 8] == c && arr[r][(p + 2) % 8] == c) ||
+                (arr[r][(p) % 8] == c && arr[r][(p - 1) % 8] == c && arr[r][(p - 2) % 8] == c);
     }
 
     int[] getMills(MorrisColor activePlayer) {

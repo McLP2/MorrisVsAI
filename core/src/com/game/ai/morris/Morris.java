@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import static com.game.ai.morris.MorrisColor.BLACK;
 import static com.game.ai.morris.MorrisColor.WHITE;
-import static java.lang.Math.min;
 
 
 /*
@@ -175,7 +174,11 @@ public class Morris extends ApplicationAdapter {
                 break;
             case NORMAL:
                 checkJumping();
-                if (getSmallestAmount() <= 2) {
+                if (countMoves() == 0 && newMills == 0) {
+                    switchPlayer();
+                    gameState = GameState.WIN;
+                }
+                if (getBlackAmount() <= 2 || getWhiteAmount() <= 2) {
                     gameState = GameState.WIN;
                     if (newMills == 0) {
                         switchPlayer();
@@ -184,24 +187,34 @@ public class Morris extends ApplicationAdapter {
                 }
                 break;
         }
-        // TODO: lose if cant move.
     }
 
-    private void checkJumping() {
-        int whiteCount = 0;
-        int blackCount = 0;
+    private int countMoves() {
+        int counter = 0;
         for (Stone stone : stones) {
-            if (stone.isActive()) {
-                switch (stone.getStoneColor()) {
-                    case BLACK:
-                        blackCount++;
-                        break;
-                    case WHITE:
-                        whiteCount++;
-                        break;
+            //check every position for active, active player stones n add em up.
+            if (stone.isActive() && stone.getStoneColor() == activePlayer) {
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        boolean canJump;
+                        if (activePlayer == WHITE) {
+                            canJump = whiteCanJump;
+                        } else {
+                            canJump = blackCanJump;
+                        }
+                        if (board.isPositionLegal(stone, i, j, canJump)) {
+                            counter++;
+                        }
+                    }
                 }
             }
         }
+        return counter;
+    }
+
+    private void checkJumping() {
+        int whiteCount = getWhiteAmount();
+        int blackCount = getBlackAmount();
         if (whiteCount <= 3) {
             whiteCanJump = true;
         }
@@ -210,22 +223,28 @@ public class Morris extends ApplicationAdapter {
         }
     }
 
-    private int getSmallestAmount() {
+    private int getWhiteAmount() {
         int whiteCount = 0;
-        int blackCount = 0;
         for (Stone stone : stones) {
             if (stone.isActive()) {
-                switch (stone.getStoneColor()) {
-                    case BLACK:
-                        blackCount++;
-                        break;
-                    case WHITE:
-                        whiteCount++;
-                        break;
+                if (stone.getStoneColor() == WHITE) {
+                    whiteCount++;
                 }
             }
         }
-        return min(whiteCount, blackCount);
+        return whiteCount;
+    }
+
+    private int getBlackAmount() {
+        int blackCount = 0;
+        for (Stone stone : stones) {
+            if (stone.isActive()) {
+                if (stone.getStoneColor() == BLACK) {
+                    blackCount++;
+                }
+            }
+        }
+        return blackCount;
     }
 
     private void write(String string) {
@@ -307,7 +326,6 @@ public class Morris extends ApplicationAdapter {
         }
     }
 
-    // TODO: only from non-mills if there are.
     private void pickStone() {
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             for (Stone stone : stones) {
@@ -317,7 +335,8 @@ public class Morris extends ApplicationAdapter {
                 float m_x = Gdx.input.getX();
                 float m_y = Gdx.graphics.getHeight() - Gdx.input.getY();
                 if (stone.isActive() && stone.getStoneColor() != activePlayer &&
-                        (s_x - m_x) * (s_x - m_x) + (s_y - m_y) * (s_y - m_y) < (r * r)) {
+                        (s_x - m_x) * (s_x - m_x) + (s_y - m_y) * (s_y - m_y) < (r * r) &&
+                        !(board.stoneInMill(stone) && millsExist())) {
                     stone.setActive(false);
                     newMills--;
                     saveMode = true;
@@ -327,6 +346,15 @@ public class Morris extends ApplicationAdapter {
                 switchPlayer();
             }
         }
+    }
+
+    private boolean millsExist() {
+        for (Stone stone : stones) {
+            if (stone.isActive() && stone.getStoneColor() == activePlayer && board.stoneInMill(stone)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void clear() {
