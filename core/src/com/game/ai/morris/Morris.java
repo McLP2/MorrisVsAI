@@ -44,6 +44,7 @@ public class Morris extends ApplicationAdapter {
     private boolean saveMode = false;
 
     private GameBoard board;
+    private AI ai;
 
     @Override
     public void create() {
@@ -52,6 +53,7 @@ public class Morris extends ApplicationAdapter {
         whiteStone = new Texture("whiteStone.png");
         blackStone = new Texture("blackStone.png");
         font = new BitmapFont();
+        ai = new AI();
 
         stones = new Stone[18];
         board = new GameBoard(stones);
@@ -59,17 +61,8 @@ public class Morris extends ApplicationAdapter {
     }
 
     private void createStones() {
-        for (int i = 0; i < stones.length; i++) {
-            if (i % 2 == 0) {
-                stones[i] = new Stone(WHITE, whiteStone);
-                //stones[i].setRing(i / 6);
-                //tones[i].setRingPosition(i % 8);
-            } else {
-                stones[i] = new Stone(BLACK, blackStone);
-                //stones[i].setRing(i / 6);
-                //stones[i].setRingPosition(i % 8);
-            }
-        }
+        for (int i = 0; i < stones.length; i++)
+            stones[i] = i % 2 == 0 ? new Stone(WHITE, whiteStone) : new Stone(BLACK, blackStone);
     }
 
     @Override
@@ -101,6 +94,7 @@ public class Morris extends ApplicationAdapter {
         }
 
         // TODO: AI selection
+        ai.drawSelection(GameBoard.size + 2 * GameBoard.margin, GameBoard.height - GameBoard.margin);
         // TODO: TreeHunter AI
         // TODO: NeuralPower AI
     }
@@ -336,7 +330,7 @@ public class Morris extends ApplicationAdapter {
                 float m_y = Gdx.graphics.getHeight() - Gdx.input.getY();
                 if (stone.isActive() && stone.getStoneColor() != activePlayer &&
                         (s_x - m_x) * (s_x - m_x) + (s_y - m_y) * (s_y - m_y) < (r * r) &&
-                        !(board.stoneInMill(stone) && millsExist())) {
+                        !(board.stoneInMill(stone) && nonMillsExist())) {
                     stone.setActive(false);
                     newMills--;
                     saveMode = true;
@@ -348,9 +342,9 @@ public class Morris extends ApplicationAdapter {
         }
     }
 
-    private boolean millsExist() {
+    private boolean nonMillsExist() {
         for (Stone stone : stones) {
-            if (stone.isActive() && stone.getStoneColor() == activePlayer && board.stoneInMill(stone)) {
+            if (stone.isActive() && stone.getStoneColor() != activePlayer && !board.stoneInMill(stone)) {
                 return true;
             }
         }

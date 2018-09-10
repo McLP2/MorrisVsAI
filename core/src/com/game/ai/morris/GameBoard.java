@@ -7,9 +7,9 @@ import static com.badlogic.gdx.math.MathUtils.round;
 import static java.lang.Math.abs;
 
 class GameBoard {
-    private static final int margin = 96;
-    private static final int height = Gdx.graphics.getHeight();
-    private static final int size = height - 2 * margin;
+    static final int margin = 96;
+    static final int height = Gdx.graphics.getHeight();
+    static final int size = height - 2 * margin;
 
     private ShapeRenderer renderer = new ShapeRenderer();
 
@@ -61,13 +61,13 @@ class GameBoard {
         renderer.setColor(0, 0, 0, 1);
 
         renderer.rect(margin, margin, size, size);
-        renderer.rect(margin + size / 6, margin + size / 6, size * 2 / 3, size * 2 / 3);
-        renderer.rect(margin + size / 3, margin + size / 3, size / 3, size / 3);
+        renderer.rect(margin + size / 6f, margin + size / 6f, size * 2f / 3f, size * 2 / 3f);
+        renderer.rect(margin + size / 3f, margin + size / 3f, size / 3f, size / 3f);
 
-        renderer.line(margin + size / 2, margin + size, margin + size / 2, margin + size / 3 * 2);
-        renderer.line(margin + size / 2, margin, margin + size / 2, margin + size / 3);
-        renderer.line(margin, margin + size / 2, margin + size / 3, margin + size / 2);
-        renderer.line(margin + size / 3 * 2, margin + size / 2, margin + size, margin + size / 2);
+        renderer.line(margin + size / 2f, margin + size, margin + size / 2f, margin + size / 3f * 2);
+        renderer.line(margin + size / 2f, margin, margin + size / 2f, margin + size / 3f);
+        renderer.line(margin, margin + size / 2f, margin + size / 3f, margin + size / 2f);
+        renderer.line(margin + size / 3f * 2, margin + size / 2f, margin + size, margin + size / 2f);
 
         renderer.end();
     }
