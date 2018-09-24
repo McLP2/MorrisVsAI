@@ -56,7 +56,7 @@ public class Morris extends ApplicationAdapter {
         batch = new SpriteBatch();
         whiteStone = new Texture("whiteStone.png");
         blackStone = new Texture("blackStone.png");
-        font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("DejaVuSansLight.fnt"));
         ai = new AI(multiplexer);
 
         stones = new Stone[18];

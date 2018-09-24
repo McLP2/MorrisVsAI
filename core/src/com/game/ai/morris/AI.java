@@ -10,42 +10,68 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 
 class AI {
-    private ShapeRenderer renderer = new ShapeRenderer();
-    private BitmapFont font = new BitmapFont();
+    private BitmapFont font = new BitmapFont(Gdx.files.internal("DejaVuSansLight.fnt"));
     private SpriteBatch batch = new SpriteBatch();
 
-    private TextButton button;
+    private TextButton button_player;
+    private TextButton button_tree;
+    private TextButton button_neural;
+
+    private Slider tree_complexity;
+
     private Stage stage;
 
     public AI(InputMultiplexer multiplexer) {
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("button.pack"));
+        TextureAtlas buttonTextureAtlas = new TextureAtlas(Gdx.files.internal("button.pack"));
+        TextureAtlas sliderTextureAtlas = new TextureAtlas(Gdx.files.internal("slider.pack"));
         stage = new Stage();
         multiplexer.addProcessor(stage);
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        Skin skin = new Skin(atlas);
-        style.checked = skin.getDrawable("down");
-        style.up = skin.getDrawable("up");
-        style.down = skin.getDrawable("down");
-        style.over = skin.getDrawable("hover");
-        style.font = font;
-        button = new TextButton("Button 1", style);
-        button.setX(50);
-        button.setY(100);
-        stage.addActor(button);
+
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        Skin buttonSkin = new Skin(buttonTextureAtlas);
+        buttonStyle.checked = buttonSkin.getDrawable("down");
+        buttonStyle.up = buttonSkin.getDrawable("up");
+        buttonStyle.over = buttonSkin.getDrawable("hover");
+        buttonStyle.checkedOver = buttonSkin.getDrawable("hover");
+        buttonStyle.font = font;
+        buttonStyle.fontColor = Color.BLACK;
+
+        button_player = new TextButton("Local Human", buttonStyle);
+        button_tree = new TextButton("TreeHunter (AI)", buttonStyle);
+        button_neural = new TextButton("NeuralPower (AI)", buttonStyle);
+
+        stage.addActor(button_player);
+        stage.addActor(button_tree);
+        stage.addActor(button_neural);
+
+
+        Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
+        Skin sliderSkin = new Skin(sliderTextureAtlas);
+        sliderStyle.knob = sliderSkin.getDrawable("knob");
+        sliderStyle.background = sliderSkin.getDrawable("background");
+        tree_complexity = new Slider(5, 105, 5, false, sliderStyle);
+
+        stage.addActor(tree_complexity);
     }
 
     void drawSelection(float x, float y) {
-        Gdx.gl.glLineWidth(2);
-        renderer.begin(ShapeRenderer.ShapeType.Line);
-        renderer.setColor(Color.BLACK);
-        renderer.line(x, y, x + 100, y);
-        renderer.end();
         batch.begin();
         font.setColor(Color.BLACK);
-        font.draw(batch, "AI selection", x, y);
+        font.draw(batch, "Select Opponent", x, y);
         batch.end();
+
+        button_player.setX(x);
+        button_player.setY(y - 100);
+        button_tree.setX(x);
+        button_tree.setY(y - 180);
+        tree_complexity.setWidth(310);
+        tree_complexity.setX(x + 10);
+        tree_complexity.setY(y - 232);
+        button_neural.setX(x);
+        button_neural.setY(y - 300);
         stage.draw();
     }
 }

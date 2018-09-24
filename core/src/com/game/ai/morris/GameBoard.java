@@ -201,6 +201,7 @@ class GameBoard {
         }
     }
 
+    // TODO: (write) test & fix
     boolean stoneInMill(Stone stone) {
         MorrisColor[][] arr = toArray();
         int p = stone.getRingPosition() + 8; // for modulo
