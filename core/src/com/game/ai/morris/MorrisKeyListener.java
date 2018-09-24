@@ -5,10 +5,13 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class MorrisKeyListener implements InputProcessor {
+public class MorrisKeyListener implements InputProcessor, EventListener {
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
@@ -67,6 +70,11 @@ public class MorrisKeyListener implements InputProcessor {
 
     @Override
     public boolean scrolled(int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean handle(Event event) {
         return false;
     }
 }

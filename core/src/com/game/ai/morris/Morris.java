@@ -3,6 +3,7 @@ package com.game.ai.morris;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,6 +27,7 @@ import static com.game.ai.morris.MorrisColor.WHITE;
 */
 
 public class Morris extends ApplicationAdapter {
+
     private SpriteBatch batch;
     private Texture whiteStone;
     private Texture blackStone;
@@ -48,12 +50,14 @@ public class Morris extends ApplicationAdapter {
 
     @Override
     public void create() {
-        Gdx.input.setInputProcessor(new MorrisKeyListener());
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        Gdx.input.setInputProcessor(multiplexer);
+        multiplexer.addProcessor(new MorrisKeyListener());
         batch = new SpriteBatch();
         whiteStone = new Texture("whiteStone.png");
         blackStone = new Texture("blackStone.png");
         font = new BitmapFont();
-        ai = new AI();
+        ai = new AI(multiplexer);
 
         stones = new Stone[18];
         board = new GameBoard(stones);
