@@ -48,11 +48,13 @@ public class Morris extends ApplicationAdapter {
     private GameBoard board;
     private AI ai;
 
+    public Opponent opponent;
+
     @Override
     public void create() {
         InputMultiplexer multiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(multiplexer);
-        multiplexer.addProcessor(new MorrisKeyListener());
+        multiplexer.addProcessor(new MorrisKeyListener(this));
         batch = new SpriteBatch();
         whiteStone = new Texture("whiteStone.png");
         blackStone = new Texture("blackStone.png");
@@ -97,7 +99,6 @@ public class Morris extends ApplicationAdapter {
                 break;
         }
 
-        // TODO: AI selection
         ai.drawSelection(GameBoard.size + 2 * GameBoard.margin, GameBoard.height - GameBoard.margin);
         // TODO: TreeHunter AI
         // TODO: NeuralPower AI
@@ -382,5 +383,8 @@ public class Morris extends ApplicationAdapter {
         whiteStone.dispose();
         blackStone.dispose();
         font.dispose();
+        ai.dispose();
+        board.dispose();
+        super.dispose();
     }
 }

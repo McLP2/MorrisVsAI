@@ -7,16 +7,22 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MorrisKeyListener implements InputProcessor, EventListener {
+    private Morris main;
+
+    public MorrisKeyListener(Morris pMain) {
+        main = pMain;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Input.Keys.ESCAPE:
-                Gdx.app.exit();
+                main.dispose();
+                //Gdx.app.exit();
                 break;
             case Input.Keys.F12:
                 takeScreenshot();

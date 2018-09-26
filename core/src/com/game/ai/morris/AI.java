@@ -6,11 +6,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 class AI {
     private BitmapFont font = new BitmapFont(Gdx.files.internal("DejaVuSansLight.fnt"));
@@ -47,12 +48,53 @@ class AI {
         stage.addActor(button_tree);
         stage.addActor(button_neural);
 
+        button_player.setChecked(true);
+
 
         Slider.SliderStyle sliderStyle = new Slider.SliderStyle();
         Skin sliderSkin = new Skin(sliderTextureAtlas);
         sliderStyle.knob = sliderSkin.getDrawable("knob");
         sliderStyle.background = sliderSkin.getDrawable("background");
         tree_complexity = new Slider(5, 105, 5, false, sliderStyle);
+        tree_complexity.setValue(25);
+
+        button_player.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if (button_player.isChecked()) {
+                    button_neural.setChecked(false);
+                    button_tree.setChecked(false);
+                } else {
+                    button_player.setChecked(true);
+                }
+            }
+        });
+        button_tree.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if (button_tree.isChecked()) {
+                    button_neural.setChecked(false);
+                    button_player.setChecked(false);
+                } else {
+                    button_tree.setChecked(true);
+                }
+            }
+        });
+        button_neural.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                if (button_neural.isChecked()) {
+                    button_tree.setChecked(false);
+                    button_player.setChecked(false);
+                } else {
+                    button_neural.setChecked(true);
+                }
+            }
+        });
+
 
         stage.addActor(tree_complexity);
     }
@@ -73,5 +115,11 @@ class AI {
         button_neural.setX(x);
         button_neural.setY(y - 300);
         stage.draw();
+    }
+
+    public void dispose() {
+        stage.dispose();
+        font.dispose();
+        batch.dispose();
     }
 }

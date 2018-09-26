@@ -249,4 +249,9 @@ class GameBoard {
         }
         return result;
     }
+
+    public void dispose() {
+        renderer.dispose();
+    }
 }
+
