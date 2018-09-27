@@ -1,25 +1,27 @@
-package com.game.ai.morris;
+package com.game.morris.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.game.morris.enums.MorrisColor;
+import com.game.morris.objects.Stone;
 
 import static com.badlogic.gdx.math.MathUtils.round;
 import static java.lang.Math.abs;
 
-class GameBoard {
-    static final int margin = 96;
-    static final int height = Gdx.graphics.getHeight();
-    static final int size = height - 2 * margin;
+public class GameBoard {
+    public static final int margin = 96;
+    public static final int height = Gdx.graphics.getHeight();
+    public static final int size = height - 2 * margin;
 
     private ShapeRenderer renderer = new ShapeRenderer();
 
     private Stone[] stones;
 
-    GameBoard(Stone[] stones) {
+    public GameBoard(Stone[] stones) {
         this.stones = stones;
     }
 
-    void draw() {
+    public void draw() {
         drawGrid();
         drawVertices();
     }
@@ -72,7 +74,7 @@ class GameBoard {
         renderer.end();
     }
 
-    static int getGridCoordinatesX(int ring, int position) {
+    public static int getGridCoordinatesX(int ring, int position) {
         int x = -1;
         switch (position) {
             case 0:
@@ -103,7 +105,7 @@ class GameBoard {
         return margin + x * (ring + 1) * size / 6 + size / 6 * (2 - ring);
     }
 
-    static int getGridCoordinatesY(int ring, int position) {
+    public static int getGridCoordinatesY(int ring, int position) {
         int y = -1;
         switch (position) {
             case 0:
@@ -150,7 +152,7 @@ class GameBoard {
         return finalArray;
     }
 
-    int getNearestRing(Stone stone, boolean canJump) {
+    public int getNearestRing(Stone stone, boolean canJump) {
         int x = round(stone.getX());
         int y = round(stone.getY());
         int highscore = -1;
@@ -169,7 +171,7 @@ class GameBoard {
         return highvalue;
     }
 
-    int getNearestRingPosition(Stone stone, boolean canJump) {
+    public int getNearestRingPosition(Stone stone, boolean canJump) {
         int x = round(stone.getX());
         int y = round(stone.getY());
         int highscore = -1;
@@ -188,7 +190,7 @@ class GameBoard {
         return highvalue;
     }
 
-    boolean isPositionLegal(Stone stone, int ring, int position, boolean canJump) {
+    public boolean isPositionLegal(Stone stone, int ring, int position, boolean canJump) {
         boolean posEmpty = this.toArray()[ring][position] == MorrisColor.NONE;
         if (canJump) {
             return posEmpty;
@@ -202,7 +204,7 @@ class GameBoard {
     }
 
     // TODO: (write) test & fix
-    boolean stoneInMill(Stone stone) {
+    public boolean stoneInMill(Stone stone) {
         MorrisColor[][] arr = toArray();
         int p = stone.getRingPosition() + 8; // for modulo
         int r = stone.getRing();
@@ -215,7 +217,7 @@ class GameBoard {
                 (arr[r][(p) % 8] == c && arr[r][(p - 1) % 8] == c && arr[r][(p - 2) % 8] == c);
     }
 
-    int[] getMills(MorrisColor activePlayer) {
+    public int[] getMills(MorrisColor activePlayer) {
         MorrisColor[][] arr = toArray();
         int i = 0;
         int[] result = new int[0];

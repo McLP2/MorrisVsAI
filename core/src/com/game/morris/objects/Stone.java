@@ -1,20 +1,22 @@
-package com.game.ai.morris;
+package com.game.morris.objects;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.game.morris.ui.GameBoard;
+import com.game.morris.enums.MorrisColor;
 
 import static com.badlogic.gdx.math.MathUtils.round;
 
-class Stone extends Sprite {
+public class Stone extends Sprite {
     private MorrisColor stoneColor;
     private boolean active;
     private int radius;
     private int ring;
     private int ringPosition;
 
-    Stone(MorrisColor color, Texture texture) {
+    public Stone(MorrisColor color, Texture texture) {
         super(texture);
         float scale = Gdx.graphics.getHeight() / (float) 1536;
         this.setOriginCenter();
@@ -24,19 +26,19 @@ class Stone extends Sprite {
         active = false;
     }
 
-    MorrisColor getStoneColor() {
+    public MorrisColor getStoneColor() {
         return stoneColor;
     }
 
-    boolean isActive() {
+    public boolean isActive() {
         return active;
     }
 
-    void setActive(boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
-    int getRadius() {
+    public int getRadius() {
         return radius;
     }
 
@@ -47,7 +49,7 @@ class Stone extends Sprite {
         }
     }
 
-    void setRingPosition(int ringPosition) {
+    public void setRingPosition(int ringPosition) {
         this.ringPosition = ringPosition;
         setPosition(
                 GameBoard.getGridCoordinatesX(ring, ringPosition),
@@ -55,7 +57,7 @@ class Stone extends Sprite {
         );
     }
 
-    void setRing(int ring) {
+    public void setRing(int ring) {
         this.ring = ring;
         setPosition(
                 GameBoard.getGridCoordinatesX(ring, ringPosition),
@@ -78,11 +80,11 @@ class Stone extends Sprite {
         return super.getY() + getHeight() / 2;
     }
 
-    int getRingPosition() {
+    public int getRingPosition() {
         return ringPosition;
     }
 
-    int getRing() {
+    public int getRing() {
         return ring;
     }
 }

@@ -1,4 +1,4 @@
-package com.game.ai.morris;
+package com.game.morris.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -12,8 +12,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.game.morris.Morris;
+import com.game.morris.enums.Opponent;
 
-class AI {
+public class AiSelection {
     private BitmapFont font = new BitmapFont(Gdx.files.internal("DejaVuSansLight.fnt"));
     private SpriteBatch batch = new SpriteBatch();
 
@@ -25,7 +27,7 @@ class AI {
 
     private Stage stage;
 
-    public AI(InputMultiplexer multiplexer) {
+    public AiSelection(final Morris pMain, InputMultiplexer multiplexer) {
         TextureAtlas buttonTextureAtlas = new TextureAtlas(Gdx.files.internal("button.pack"));
         TextureAtlas sliderTextureAtlas = new TextureAtlas(Gdx.files.internal("slider.pack"));
         stage = new Stage();
@@ -41,8 +43,8 @@ class AI {
         buttonStyle.fontColor = Color.BLACK;
 
         button_player = new TextButton("Local Human", buttonStyle);
-        button_tree = new TextButton("TreeHunter (AI)", buttonStyle);
-        button_neural = new TextButton("NeuralPower (AI)", buttonStyle);
+        button_tree = new TextButton("TreeHunter (AiSelection)", buttonStyle);
+        button_neural = new TextButton("NeuralPower (AiSelection)", buttonStyle);
 
         stage.addActor(button_player);
         stage.addActor(button_tree);
@@ -65,6 +67,7 @@ class AI {
                 if (button_player.isChecked()) {
                     button_neural.setChecked(false);
                     button_tree.setChecked(false);
+                    pMain.setOpponent(Opponent.HUMAN);
                 } else {
                     button_player.setChecked(true);
                 }
@@ -77,6 +80,7 @@ class AI {
                 if (button_tree.isChecked()) {
                     button_neural.setChecked(false);
                     button_player.setChecked(false);
+                    pMain.setOpponent(Opponent.TREE);
                 } else {
                     button_tree.setChecked(true);
                 }
@@ -89,6 +93,7 @@ class AI {
                 if (button_neural.isChecked()) {
                     button_tree.setChecked(false);
                     button_player.setChecked(false);
+                    pMain.setOpponent(Opponent.NEURAL);
                 } else {
                     button_neural.setChecked(true);
                 }
@@ -99,7 +104,7 @@ class AI {
         stage.addActor(tree_complexity);
     }
 
-    void drawSelection(float x, float y) {
+    public void drawSelection(float x, float y) {
         batch.begin();
         font.setColor(Color.BLACK);
         font.draw(batch, "Select Opponent", x, y);

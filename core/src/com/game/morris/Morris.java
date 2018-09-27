@@ -1,4 +1,4 @@
-package com.game.ai.morris;
+package com.game.morris;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -9,9 +9,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.game.morris.enums.GameState;
+import com.game.morris.enums.MorrisColor;
+import com.game.morris.enums.Opponent;
+import com.game.morris.listeners.MorrisKeyListener;
+import com.game.morris.objects.Stone;
+import com.game.morris.ui.AiSelection;
+import com.game.morris.ui.GameBoard;
 
-import static com.game.ai.morris.MorrisColor.BLACK;
-import static com.game.ai.morris.MorrisColor.WHITE;
+import static com.game.morris.enums.MorrisColor.BLACK;
+import static com.game.morris.enums.MorrisColor.WHITE;
+import static com.game.morris.enums.Opponent.*;
 
 
 /*
@@ -46,9 +54,9 @@ public class Morris extends ApplicationAdapter {
     private boolean saveMode = false;
 
     private GameBoard board;
-    private AI ai;
+    private AiSelection aiSelection;
 
-    public Opponent opponent;
+    private Opponent opponent = HUMAN;
 
     @Override
     public void create() {
@@ -59,11 +67,15 @@ public class Morris extends ApplicationAdapter {
         whiteStone = new Texture("whiteStone.png");
         blackStone = new Texture("blackStone.png");
         font = new BitmapFont(Gdx.files.internal("DejaVuSansLight.fnt"));
-        ai = new AI(multiplexer);
+        aiSelection = new AiSelection(this, multiplexer);
 
         stones = new Stone[18];
         board = new GameBoard(stones);
         createStones();
+    }
+
+    public void setOpponent(Opponent opponent) {
+        this.opponent = opponent;
     }
 
     private void createStones() {
@@ -76,6 +88,28 @@ public class Morris extends ApplicationAdapter {
         clear();
         board.draw();
         drawStones();
+        aiSelection.drawSelection(GameBoard.size + 2 * GameBoard.margin, GameBoard.height - GameBoard.margin);
+
+        if (activePlayer == WHITE) {
+            humansTurn();
+        } else {
+            switch (opponent) {
+                case HUMAN:
+                    humansTurn();
+                    break;
+                case TREE:
+                    write("TreeHunter is thinking...");
+                    break;
+                case NEURAL:
+                    write("NeuralPower is thinking...");
+                    break;
+            }
+        }
+        // TODO: make use of TreeHunter ai
+        // TODO: make use of NeuralPower ai
+    }
+
+    private void humansTurn() {
         if (saveMode) {
             if (!Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                 saveMode = false;
@@ -98,10 +132,6 @@ public class Morris extends ApplicationAdapter {
                 write("Player " + activePlayer.toString() + " has won!");
                 break;
         }
-
-        ai.drawSelection(GameBoard.size + 2 * GameBoard.margin, GameBoard.height - GameBoard.margin);
-        // TODO: TreeHunter AI
-        // TODO: NeuralPower AI
     }
 
     private void place() {
@@ -383,7 +413,7 @@ public class Morris extends ApplicationAdapter {
         whiteStone.dispose();
         blackStone.dispose();
         font.dispose();
-        ai.dispose();
+        aiSelection.dispose();
         board.dispose();
         super.dispose();
     }

@@ -1,4 +1,4 @@
-package com.game.ai.morris;
+package com.game.morris.listeners;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.game.morris.Morris;
 
 public class MorrisKeyListener implements InputProcessor, EventListener {
     private Morris main;
