@@ -276,36 +276,25 @@ public class GameBoard {
                         (arr[r][(p) % 8] == c && arr[r][(p - 1) % 8] == c && arr[r][(p - 2) % 8] == c)));
     }
 
-    public int[] getMills(MorrisColor activePlayer) {
+    public ArrayList<Integer> getMills(MorrisColor playerColor) {
         MorrisColor[][] arr = toArray();
-        int i = 0;
-        int[] result = new int[0];
+        ArrayList<Integer> result = new ArrayList<>();
+        // add same-ring-mills (ring * 8 + first stones position)
         for (int r = 0; r < 3; r++) {
             for (int p = 0; p < 8; p += 2) {
-                if (arr[r][p] == activePlayer &&
-                        arr[r][p + 1] == activePlayer &&
-                        arr[r][(p + 2) % 8] == activePlayer) {
-                    i++;
-                    int[] new_result = new int[i];
-                    if (result.length > 0) {
-                        System.arraycopy(result, 0, new_result, 0, i - 1);
-                    }
-                    new_result[i - 1] = r * 8 + p;
-                    result = new_result;
+                if (arr[r][p] == playerColor &&
+                        arr[r][p + 1] == playerColor &&
+                        arr[r][(p + 2) % 8] == playerColor) {
+                    result.add(r * 8 + p);
                 }
             }
         }
+        // add same-position-mills (all stones position)
         for (int p = 1; p < 8; p += 2) {
-            if (arr[0][p] == activePlayer &&
-                    arr[1][p] == activePlayer &&
-                    arr[2][p] == activePlayer) {
-                i++;
-                int[] new_result = new int[i];
-                if (result.length > 0) {
-                    System.arraycopy(result, 0, new_result, 0, i - 1);
-                }
-                new_result[i - 1] = p;
-                result = new_result;
+            if (arr[0][p] == playerColor &&
+                    arr[1][p] == playerColor &&
+                    arr[2][p] == playerColor) {
+                result.add(p);
             }
         }
         return result;

@@ -17,6 +17,8 @@ import com.game.morris.objects.Stone;
 import com.game.morris.ui.AiSelection;
 import com.game.morris.ui.GameBoard;
 
+import java.util.ArrayList;
+
 import static com.game.morris.enums.MorrisColor.BLACK;
 import static com.game.morris.enums.MorrisColor.WHITE;
 import static com.game.morris.enums.Opponent.*;
@@ -141,7 +143,7 @@ public class Morris extends ApplicationAdapter {
         } else {
             write("Player " + activePlayer.toString() + " can place a stone!");
             if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                int[] lastMills = board.getMills(activePlayer);
+                ArrayList<Integer> lastMills = board.getMills(activePlayer);
 
                 Stone stone = stones[placedCounter];
                 int x = Gdx.input.getX();
@@ -320,7 +322,7 @@ public class Morris extends ApplicationAdapter {
                 activeStone = null;
                 return;
             }
-            int[] lastMills = board.getMills(activePlayer);
+            ArrayList<Integer> lastMills = board.getMills(activePlayer);
 
             // if no position, reset
             boolean canJump;
