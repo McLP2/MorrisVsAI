@@ -206,7 +206,7 @@ public class GameBoard {
     }
 
     public MorrisColor[][][] nextPossibleMoves(MorrisColor currentPlayer, boolean mustPick, boolean canJump) {
-        ArrayList<MorrisColor[][]> movesList = new ArrayList<MorrisColor[][]>();
+        ArrayList<MorrisColor[][]> movesList = new ArrayList<>();
         if (!mustPick) {
             // check every stone of current player in every position (forward canJump)
             for (Stone stone : stones) {
