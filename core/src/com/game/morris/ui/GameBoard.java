@@ -210,11 +210,12 @@ public class GameBoard {
         int r = stone.getRing();
         MorrisColor c = stone.getStoneColor();
         if (p % 2 == 1 &&
-                (arr[0][p % 8] == c && arr[1][p % 8] == c && arr[2][p % 8] == c) ||
-                (arr[r][(p - 1) % 8] == c && arr[r][p % 8] == c && arr[r][(p + 1) % 8] == c)) {
+                ((arr[0][p % 8] == c && arr[1][p % 8] == c && arr[2][p % 8] == c) ||
+                        (arr[r][(p - 1) % 8] == c && arr[r][p % 8] == c && arr[r][(p + 1) % 8] == c))) {
             return true;
-        } else return (arr[r][(p) % 8] == c && arr[r][(p + 1) % 8] == c && arr[r][(p + 2) % 8] == c) ||
-                (arr[r][(p) % 8] == c && arr[r][(p - 1) % 8] == c && arr[r][(p - 2) % 8] == c);
+        } else return (p % 2 == 0 &&
+                ((arr[r][(p) % 8] == c && arr[r][(p + 1) % 8] == c && arr[r][(p + 2) % 8] == c) ||
+                        (arr[r][(p) % 8] == c && arr[r][(p - 1) % 8] == c && arr[r][(p - 2) % 8] == c)));
     }
 
     public int[] getMills(MorrisColor activePlayer) {
