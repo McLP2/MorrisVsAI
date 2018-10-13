@@ -138,7 +138,7 @@ public class GameBoard {
         return margin + y * (ring + 1) * size / 6 + size / 6 * (2 - ring);
     }
 
-    private MorrisColor[][] toArray() {
+    public MorrisColor[][] toArray() {
         // ring, position
         MorrisColor[][] finalArray = new MorrisColor[3][8];
         for (int i = 0; i < 3; i++) {

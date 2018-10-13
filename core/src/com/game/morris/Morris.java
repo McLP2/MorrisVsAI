@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.game.morris.ai.Situation;
 import com.game.morris.enums.GameState;
 import com.game.morris.enums.MorrisColor;
 import com.game.morris.enums.Opponent;
@@ -55,7 +56,7 @@ public class Morris extends ApplicationAdapter {
     private float activeY;
     private boolean saveMode = false;
 
-    private GameBoard board;
+    public GameBoard board;
     private AiSelection aiSelection;
 
     private Opponent opponent = HUMAN;
@@ -409,5 +410,17 @@ public class Morris extends ApplicationAdapter {
         aiSelection.dispose();
         board.dispose();
         super.dispose();
+    }
+
+    public MorrisColor[][] getCurrentSituation() {
+        return board.toArray();
+    }
+
+    public Situation simulate(Situation situation, MorrisColor[][] move) {
+        // TODO: temporary apply situation
+        // TODO: write simulation of move
+        Situation simulation = new Situation(move, situation.getPlayer(), situation.isPick(), situation.isJump());
+        simulation.setWinner(WHITE);
+        return simulation;
     }
 }
