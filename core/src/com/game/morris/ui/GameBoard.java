@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.game.morris.enums.MorrisColor;
 import com.game.morris.objects.Stone;
 
+import java.util.ArrayList;
+
 import static com.badlogic.gdx.math.MathUtils.round;
 import static java.lang.Math.abs;
 
@@ -136,7 +138,7 @@ public class GameBoard {
         return margin + y * (ring + 1) * size / 6 + size / 6 * (2 - ring);
     }
 
-    public MorrisColor[][] toArray() {
+    private MorrisColor[][] toArray() {
         // ring, position
         MorrisColor[][] finalArray = new MorrisColor[3][8];
         for (int i = 0; i < 3; i++) {
@@ -203,8 +205,64 @@ public class GameBoard {
         }
     }
 
-    // TODO: (write) test & fix
-    public boolean stoneInMill(Stone stone) {
+    public MorrisColor[][][] nextPossibleMoves(MorrisColor currentPlayer, boolean mustPick, boolean canJump) {
+        ArrayList<MorrisColor[][]> movesList = new ArrayList<MorrisColor[][]>();
+        if (!mustPick) {
+            // check every stone of current player in every position (forward canJump)
+            for (Stone stone : stones) {
+                if (stone.getStoneColor() == currentPlayer) {
+                    for (int r = 0; r < 3; r++) {
+                        for (int p = 0; r < 3; r++) {
+                            if (isPositionLegal(stone, r, p, canJump)) {
+                                MorrisColor[][] move = toArray();
+                                move[stone.getRing()][stone.getRingPosition()] = MorrisColor.NONE;
+                                move[r][p] = currentPlayer;
+                                movesList.add(move);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            // check if any opponents stone can be picked
+            for (Stone stone : stones) {
+                if (stone.getStoneColor() != currentPlayer) {
+                    for (int r = 0; r < 3; r++) {
+                        for (int p = 0; r < 3; r++) {
+                            if (canBePicked(stone)) {
+                                MorrisColor[][] move = toArray();
+                                move[r][p] = MorrisColor.NONE;
+                                movesList.add(move);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        MorrisColor[][][] moves = new MorrisColor[movesList.size()][3][8];
+        for (int i = 0; i < moves.length; i++) {
+            moves[i] = movesList.get(i);
+        }
+
+        return moves;
+    }
+
+    public boolean canBePicked(Stone stone) {
+        return !(stoneInMill(stone) && nonMillsExist(stone.getStoneColor()));
+    }
+
+    private boolean nonMillsExist(MorrisColor color) {
+        for (Stone stone : stones) {
+            if (stone.isActive() && stone.getStoneColor() == color && !stoneInMill(stone)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean stoneInMill(Stone stone) {
         MorrisColor[][] arr = toArray();
         int p = stone.getRingPosition() + 8; // for modulo
         int r = stone.getRing();

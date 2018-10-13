@@ -365,7 +365,7 @@ public class Morris extends ApplicationAdapter {
                 float m_y = Gdx.graphics.getHeight() - Gdx.input.getY();
                 if (stone.isActive() && stone.getStoneColor() != activePlayer &&
                         (s_x - m_x) * (s_x - m_x) + (s_y - m_y) * (s_y - m_y) < (r * r) &&
-                        !(board.stoneInMill(stone) && nonMillsExist())) {
+                        (board.canBePicked(stone))) {
                     stone.setActive(false);
                     newMills--;
                     saveMode = true;
@@ -375,15 +375,6 @@ public class Morris extends ApplicationAdapter {
                 switchPlayer();
             }
         }
-    }
-
-    private boolean nonMillsExist() {
-        for (Stone stone : stones) {
-            if (stone.isActive() && stone.getStoneColor() != activePlayer && !board.stoneInMill(stone)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void clear() {
